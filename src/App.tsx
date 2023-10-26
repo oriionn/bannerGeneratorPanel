@@ -31,8 +31,8 @@ const useStyles = makeStyles({
 });
 
 export const App: React.FunctionComponent = () => {
-  const [project, setProject] = useState("Aucun nom");
-  const [description, setDescription] = useState("Aucune description");
+  const [project, setProject] = useState("");
+  const [description, setDescription] = useState("");
   const [previewUrl, setPreviewUrl] = useState("https://banapi.oriondev.fr");
 
   const nameId = useId("name");
@@ -45,12 +45,12 @@ export const App: React.FunctionComponent = () => {
         <CardHeader
           header={
             <Body1>
-              Prévisualisation - {project}
+              Prévisualisation - {project === "" ? "Aucun nom" : project}
             </Body1>
           }
 
           description={
-            <Caption1>{description}</Caption1>
+            <Caption1>{description === "" ? "Aucune description" : description}</Caption1>
           }
         />
 
@@ -78,7 +78,7 @@ export const App: React.FunctionComponent = () => {
         </Label>
         <Input id={nameId} onChange={(e) => {
           setProject(e.target.value);
-          setPreviewUrl(`https://banapi.oriondev.fr/?name=${e.target.value}&description=${description}`);
+          setPreviewUrl(`https://banapi.oriondev.fr/?name=${encodeURIComponent(e.target.value)}&description=${encodeURIComponent(description)}`);
         }} />
       </div>
 
@@ -88,7 +88,7 @@ export const App: React.FunctionComponent = () => {
         </Label>
         <Input id={descriptionId} onChange={(e) => {
           setDescription(e.target.value);
-          setPreviewUrl(`https://banapi.oriondev.fr/?name=${project}&description=${e.target.value}`);
+          setPreviewUrl(`https://banapi.oriondev.fr/?name=${encodeURIComponent(project)}&description=${encodeURIComponent(e.target.value)}`);
         }} />
       </div>
     </div>
