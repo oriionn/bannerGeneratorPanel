@@ -1,21 +1,22 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import { App } from './App';
-import { mergeStyles } from '@fluentui/react';
-import reportWebVitals from './reportWebVitals';
+import {FluentProvider, teamsDarkTheme, useThemeClassName} from '@fluentui/react-components';
 
-// Inject some global styles
-mergeStyles({
-  ':global(body,html,#root)': {
-    margin: 0,
-    padding: 0,
-    height: '100vh',
-  },
-});
+function ApplyToBody() {
+  const classes = useThemeClassName();
 
-ReactDOM.render(<App />, document.getElementById('root'));
+  useEffect(() => {
+    const classList = classes.split(" ");
+    document.body.classList.add(...classList);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+    return () => document.body.classList.remove(...classList);
+  }, [classes]);
+
+  return null;
+}
+
+ReactDOM.render(<FluentProvider theme={teamsDarkTheme}>
+  <ApplyToBody />
+  <App />
+</FluentProvider>, document.getElementById('root'));

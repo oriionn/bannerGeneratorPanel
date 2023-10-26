@@ -1,44 +1,96 @@
-import React from 'react';
-import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import {
+  Body1,
+  Button,
+  Caption1,
+  Card,
+  CardFooter,
+  CardHeader,
+  CardPreview, Image, Input,
+  Label,
+  makeStyles,
+  shorthands, useId
+} from "@fluentui/react-components";
+import { CopyFilled, CopyAddFilled } from "@fluentui/react-icons";
 
-const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
-const stackTokens: IStackTokens = { childrenGap: 15 };
-const stackStyles: Partial<IStackStyles> = {
-  root: {
-    width: '960px',
-    margin: '0 auto',
-    textAlign: 'center',
-    color: '#605e5c',
+const useStyles = makeStyles({
+  card: {
+    ...shorthands.margin("auto"),
+    width: "720px",
+    maxWidth: "100%",
+    marginTop: "10px"
   },
-};
+  field: {
+    ...shorthands.margin("auto"),
+    display: "flex",
+    flexDirection: "column",
+    ...shorthands.gap("2px"),
+    maxWidth: "400px",
+    marginTop: "10px"
+  }
+});
 
 export const App: React.FunctionComponent = () => {
+  const [project, setProject] = useState("Aucun nom");
+  const [description, setDescription] = useState("Aucune description");
+  const [previewUrl, setPreviewUrl] = useState("https://banapi.oriondev.fr");
+
+  const nameId = useId("name");
+  const descriptionId = useId("description")
+  const styles = useStyles();
+
   return (
-    <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
-      <img className="App-logo" src={logo} alt="logo" />
-      <Text variant="xxLarge" styles={boldStyle}>
-        Welcome to your Fluent UI app
-      </Text>
-      <Text variant="large">For a guide on how to customize this project, check out the Fluent UI documentation.</Text>
-      <Text variant="large" styles={boldStyle}>
-        Essential links
-      </Text>
-      <Stack horizontal tokens={stackTokens} horizontalAlign="center">
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/get-started/web">Docs</Link>
-        <Link href="https://stackoverflow.com/questions/tagged/office-ui-fabric">Stack Overflow</Link>
-        <Link href="https://github.com/microsoft/fluentui/">Github</Link>
-        <Link href="https://twitter.com/fluentui">Twitter</Link>
-      </Stack>
-      <Text variant="large" styles={boldStyle}>
-        Design system
-      </Text>
-      <Stack horizontal tokens={stackTokens} horizontalAlign="center">
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/styles/web/icons">Icons</Link>
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/styles/web">Styles</Link>
-        <Link href="https://aka.ms/themedesigner">Theme designer</Link>
-      </Stack>
-    </Stack>
+    <div>
+      <Card className={styles.card}>
+        <CardHeader
+          header={
+            <Body1>
+              Prévisualisation - {project}
+            </Body1>
+          }
+
+          description={
+            <Caption1>{description}</Caption1>
+          }
+        />
+
+        <CardPreview>
+          <img src={previewUrl} alt={project + " - " + description} />
+        </CardPreview>
+
+        <CardFooter>
+          <Button icon={<CopyFilled />} onClick={(e) => {
+            navigator.clipboard.writeText(previewUrl).then(() => {
+              alert("Lien copié !");
+            })
+          }}>Copier le lien</Button>
+          <Button icon={<CopyAddFilled />} onClick={(e) => {
+            navigator.clipboard.writeText(`![Project Banner](${previewUrl})`).then(() => {
+              alert("Lien copié !");
+            })
+          }}>Copier le lien pour un README</Button>
+        </CardFooter>
+      </Card>
+
+      <div className={styles.field}>
+        <Label htmlFor={nameId}>
+          Nom du projet
+        </Label>
+        <Input id={nameId} onChange={(e) => {
+          setProject(e.target.value);
+          setPreviewUrl(`https://banapi.oriondev.fr/?name=${e.target.value}&description=${description}`);
+        }} />
+      </div>
+
+      <div className={styles.field}>
+        <Label htmlFor={descriptionId}>
+          Description du projet
+        </Label>
+        <Input id={descriptionId} onChange={(e) => {
+          setDescription(e.target.value);
+          setPreviewUrl(`https://banapi.oriondev.fr/?name=${project}&description=${e.target.value}`);
+        }} />
+      </div>
+    </div>
   );
 };
